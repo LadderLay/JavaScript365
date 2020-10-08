@@ -122,17 +122,20 @@ Inside the scope of a single render, props and state stay the same.
 
 **1、effect 清理机制：**  
 假设有 props:{id: 10}, {id: 20}  
-  x
+
 通常的错误理解： 
 - cleans up the effect for {id: 10}
 - renders UI for {id: 20}
 - run the effect for {id: 20}
+
+
 事实上：  
 - renders UI for {id: 20}
 - cleans up the effect for {id: 10}
 - run the effect for {id: 20}
 
-React 中 每一个 render 有独立的 props/state， 同样，effect 清除机制不会去读取最新的 props, 而是会读取对应 render 的 props/state 数据。
+React 中 每一个 render 有独立的 props/state。  
+同样，effect 清除机制不会去读取最新的 props, 而是会读取对应 render 的 props/state 数据。
 ```
 // First render, props are {id: 10}
 function Example() {
@@ -171,11 +174,51 @@ function Example() {
 - 传入第二参数使得该特定值未发生改变时跳过 Effect 进行性能优化；  
 - 第二参数传入一个空数组（[]）时可构建只运行一次的 effect
 
-
-### useReducer
-
 ### useCallback
+参数：内联回调函数，依赖项数组  
+返回值：返回该回调函数的 memoized 版本。该回调函数仅在某个依赖项改变时才会更新。  
+应用场景：例如把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件。   
+
+useCallback(fn, deps) 相当于 useMemo(() => fn, deps)
 
 ### useMemo
+把“创建”函数和依赖项数组作为参数传入 useMemo，它仅会在某个依赖项改变时才重新计算 memoized 值。  
+传入 useMemo 的函数会在**渲染期间**执行。
+
+### useReducer
+`const [state, dispatch = useReducer(reducer, initialArg, init)`
+useState 的替代方案，应用场景举例：state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等。
 
 ### useLayoutEffect
+其函数签名与 useEffect 相同，但它会在所有的 DOM 变更之后同步调用 effect。可以使用它来读取 DOM 布局并同步触发重渲染。  
+需要注意 useLayoutEffect 与 componentDidMount、componentDidUpdate 的调用阶段是一样的。
+
+**useEffect & useLayoutEffect:**  
+useEffect 是异步的，在组件 UI 渲染到屏幕上之后执行；    
+而 useLayoutEffect 是同步的， 在更新挂载到 DOM 节点、组件渲染到屏幕上之前执行。即在浏览器执行绘制之前，useLayoutEffect 内部的更新计划将被同步刷新。  
+可以这样去理解：   
+
+```
+//useEffect
+1. You cause a render somehow (change state, or the parent re-renders)
+2. React renders your component (calls it)
+3. The screen is visually updated
+4. THEN useEffect runs
+
+//useLayoutEffect
+1. You cause a render somehow (change state, or the parent re-renders)
+2. React renders your component (calls it)
+3. useLayoutEffect runs, and React waits for it to finish.
+4. The screen is visually updated
+```
+
+Attention：  
+- useLayoutEffect 通过同步更新可以解决一些特定场景下的页面闪烁问题。
+- 谨慎使用该 hook。useEffect 可以满足绝大部分场景的使用，同时 useLayoutEffect 存在阻塞渲染的问题。
+
+
+
+# 参考链接：
+
+- [](https://overreacted.io/a-complete-guide-to-useeffect/)
+- [When to useLayoutEffect Instead of useEffect](https://daveceddia.com/useeffect-vs-uselayouteffect/)
