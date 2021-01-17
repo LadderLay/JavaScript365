@@ -73,17 +73,28 @@ useEffect(() => {
 )
 ```
 
-useEffect 每次渲染后都会执行：保证一致性，避免更新逻辑处理的遗漏而导致的bug。
+useEffect 默认在每次渲染后都会执行：保证一致性，避免更新逻辑处理的遗漏而导致的bug。
 -》控制 useEffect：传入第二参数使得该特定值未发生改变时跳过 Effect 进行性能优化；第二参数传入一个空数组（[]）时可构建只运行一次的 effect
 
 effect 的清除阶段在每次重新渲染时都会执行
 
 多个effect可以实现关注点分离，使得解决特定领域问题代码从业务代码中独立出来。关注点分离使得在后续的代码维护和开发时，当你修改某一关注点的部分代码时，无需知道其他部分的细节对这些部分进行相应的修改
 
-## Hook APIs
-### useState
-`const [state, setState] = useState(initialState);`  
+## 自定义 Hook
+通过自定义 Hook，可以将组件逻辑提取到可重用的函数中
+必须以 use 开头
 
+
+## Hook APIs
+
+### useState
+```
+const [state, setState] = useState(initialState);
+
+setState(newState);
+```  
+
+函数式更新
 
 ### useEffect
 使用 useEffect 完成副作用操作。  
@@ -220,5 +231,5 @@ Attention：
 
 # 参考链接：
 
-- [](https://overreacted.io/a-complete-guide-to-useeffect/)
+- [a complete guide to useEffect](https://overreacted.io/a-complete-guide-to-useeffect/)
 - [When to useLayoutEffect Instead of useEffect](https://daveceddia.com/useeffect-vs-uselayouteffect/)

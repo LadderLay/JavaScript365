@@ -104,8 +104,11 @@ Error boundaries
 - forceUpdate()
 
 ### 废弃方法
+- 经常被误用/滥用
+- 在异步渲染中存在潜在的问题。
 挂载阶段：  
 componentWillMount()  
 更新阶段：    
 componentWillUpdate()  
 componentWillReceiveProps() 
+
